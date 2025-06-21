@@ -116,7 +116,12 @@
   </div>
 
   <script>
-    const userId = "123456"; // ID fixo para este exemplo
+    // Gera e armazena user_id único, se ainda não existir
+    if (!localStorage.getItem("user_id")) {
+      localStorage.setItem("user_id", crypto.randomUUID());
+    }
+
+    const userId = localStorage.getItem("user_id");
 
     document.addEventListener("DOMContentLoaded", function () {
       const promptSalvo = localStorage.getItem("prompt_autofeed");
