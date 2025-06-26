@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -34,14 +33,14 @@
 
     .btn-prompt {
       flex: 1 1 120px;
-      background: #1c1c1c;
+      background-color: #1a1a1a;
+      border: 1px solid #444;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
       color: white;
-      border: none;
       padding: 12px 20px;
       font-size: 1em;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       transition: transform 0.2s ease-in-out;
       white-space: nowrap;
     }
@@ -80,19 +79,19 @@
     }
 
     .btn-token {
-      background: #333;
-      color: white;
-      font-size: 1em;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
       margin-top: 20px;
       width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      border-radius: 10px;
+      border: none;
+      background: #444;
+      color: white;
       cursor: pointer;
     }
 
     .btn-token:hover {
-      background: #444;
+      opacity: 0.85;
     }
   </style>
 </head>
@@ -116,7 +115,7 @@
   </div>
 
   <script>
-    // Gera e armazena user_id único
+    // Gera e armazena user_id único, se ainda não existir
     if (!localStorage.getItem("user_id")) {
       localStorage.setItem("user_id", crypto.randomUUID());
     }
