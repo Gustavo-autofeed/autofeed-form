@@ -168,5 +168,24 @@
       }
     }
   </script>
+  <button onclick="copiarToken()" style="margin-top: 20px; width: 100%; padding: 12px; font-size: 1em; border-radius: 10px; border: none; background: #444; color: white; cursor: pointer;">
+  Copiar meu código de acesso
+</button>
+
+<script>
+  function copiarToken() {
+    const token = localStorage.getItem("user_id");
+    if (!token) {
+      alert("Nenhum código encontrado.");
+      return;
+    }
+
+    navigator.clipboard.writeText(token).then(() => {
+      alert("Código copiado com sucesso: " + token);
+    }).catch(() => {
+      alert("Erro ao copiar o código.");
+    });
+  }
+</script>
 </body>
 </html>
