@@ -1,4 +1,4 @@
-<!-- 🔥 AUTOFEED – Personalização com botões ON/OFF persistentes 🔥 -->
+<!-- 🔥 AUTOFEED – Personalização com botões ON/OFF + Ativo dinâmico 🔥 -->
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -161,14 +161,9 @@
 
     const userId = localStorage.getItem("user_id");
 
-    let carrosselAtivo = localStorage.getItem("carrosselAtivo") === "true";
-    let backendAtivo = localStorage.getItem("backendAtivo") === "true";
-
-    function updateToggleButton(btnId, ativo) {
-      const btn = document.getElementById(btnId);
-      btn.textContent = ativo ? "ON" : "OFF";
-      btn.className = "toggle-btn " + (ativo ? "toggle-on" : "toggle-off");
-    }
+    let carrosselAtivo = JSON.parse(localStorage.getItem("carrosselAtivo")) || false;
+    let backendAtivo = JSON.parse(localStorage.getItem("backendAtivo")) || false;
+    let ativoGeral = true; // Se quiser controlar toggle manual, troque aqui também.
 
     document.addEventListener("DOMContentLoaded", function () {
       const promptSalvo = localStorage.getItem("prompt_autofeed");
@@ -176,9 +171,18 @@
         document.getElementById("prompt").value = promptSalvo;
       }
 
-      updateToggleButton("carrosselBtn", carrosselAtivo);
-      updateToggleButton("backendBtn", backendAtivo);
+      atualizarBotoes();
     });
+
+    function atualizarBotoes() {
+      const carrosselBtn = document.getElementById("carrosselBtn");
+      carrosselBtn.textContent = carrosselAtivo ? "ON" : "OFF";
+      carrosselBtn.className = "toggle-btn " + (carrosselAtivo ? "toggle-on" : "toggle-off");
+
+      const backendBtn = document.getElementById("backendBtn");
+      backendBtn.textContent = backendAtivo ? "ON" : "OFF";
+      backendBtn.className = "toggle-btn " + (backendAtivo ? "toggle-on" : "toggle-off");
+    }
 
     function setPrompt(texto) {
       document.getElementById("prompt").value = texto;
@@ -203,7 +207,10 @@
           },
           body: JSON.stringify({
             user_id: userId,
-            prompt: prompt
+            prompt: prompt,
+            ativo: ativoGeral,
+            carrossel: carrosselAtivo,
+            liberado_backend: backendAtivo
           })
         })
         .then(res => {
@@ -228,18 +235,18 @@
     function toggleCarrossel() {
       carrosselAtivo = !carrosselAtivo;
       localStorage.setItem("carrosselAtivo", carrosselAtivo);
-      updateToggleButton("carrosselBtn", carrosselAtivo);
-      syncSupabase("carrossel", carrosselAtivo);
+      atualizarBotoes();
+      syncSupabase();
     }
 
     function toggleBackend() {
       backendAtivo = !backendAtivo;
       localStorage.setItem("backendAtivo", backendAtivo);
-      updateToggleButton("backendBtn", backendAtivo);
-      syncSupabase("liberado_backend", backendAtivo);
+      atualizarBotoes();
+      syncSupabase();
     }
 
-    function syncSupabase(field, value) {
+    function syncSupabase() {
       fetch("https://hook.us2.make.com/9hepoum5v5jgw5mqrvj1ocxo6aq1viyi", {
         method: "POST",
         headers: {
@@ -247,13 +254,15 @@
         },
         body: JSON.stringify({
           user_id: userId,
-          [field]: value
+          carrossel: carrosselAtivo,
+          liberado_backend: backendAtivo,
+          ativo: ativoGeral
         })
       })
       .then(res => {
-        if (!res.ok) alert("Erro ao atualizar " + field);
+        if (!res.ok) alert("Erro ao sincronizar!");
       })
-      .catch(() => alert("Erro de rede ao atualizar " + field));
+      .catch(() => alert("Erro de rede ao sincronizar."));
     }
   </script>
 </body>
