@@ -1,4 +1,4 @@
-<!-- 🔥 AUTOFEED – Personalização com botão TESTE para Redetermine -->
+<!-- 🔥 AUTOFEED – Personalização com botões ON/OFF persistentes 🔥 -->
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -125,17 +125,6 @@
       font-size: 1em;
       margin-right: 8px;
     }
-
-    .btn-teste {
-      margin-top: 20px;
-      background: #007bff;
-      color: white;
-      padding: 12px 20px;
-      font-size: 1em;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
@@ -163,8 +152,6 @@
 
     <button class="btn-salvar" onclick="salvarPrompt()">Salvar estilo</button>
     <button class="btn-token" onclick="copiarToken()">Copiar meu código de acesso</button>
-
-    <button class="btn-teste" onclick="botaoTeste()">TESTE</button>
   </div>
 
   <script>
@@ -174,14 +161,23 @@
 
     const userId = localStorage.getItem("user_id");
 
-    let carrosselAtivo = false;
-    let backendAtivo = false;
+    let carrosselAtivo = localStorage.getItem("carrosselAtivo") === "true";
+    let backendAtivo = localStorage.getItem("backendAtivo") === "true";
+
+    function updateToggleButton(btnId, ativo) {
+      const btn = document.getElementById(btnId);
+      btn.textContent = ativo ? "ON" : "OFF";
+      btn.className = "toggle-btn " + (ativo ? "toggle-on" : "toggle-off");
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
       const promptSalvo = localStorage.getItem("prompt_autofeed");
       if (promptSalvo) {
         document.getElementById("prompt").value = promptSalvo;
       }
+
+      updateToggleButton("carrosselBtn", carrosselAtivo);
+      updateToggleButton("backendBtn", backendAtivo);
     });
 
     function setPrompt(texto) {
@@ -231,20 +227,19 @@
 
     function toggleCarrossel() {
       carrosselAtivo = !carrosselAtivo;
-      const btn = document.getElementById("carrosselBtn");
-      btn.textContent = carrosselAtivo ? "ON" : "OFF";
-      btn.className = "toggle-btn " + (carrosselAtivo ? "toggle-on" : "toggle-off");
+      localStorage.setItem("carrosselAtivo", carrosselAtivo);
+      updateToggleButton("carrosselBtn", carrosselAtivo);
+      syncSupabase("carrossel", carrosselAtivo);
     }
 
     function toggleBackend() {
       backendAtivo = !backendAtivo;
-      const btn = document.getElementById("backendBtn");
-      btn.textContent = backendAtivo ? "ON" : "OFF";
-      btn.className = "toggle-btn " + (backendAtivo ? "toggle-on" : "toggle-off");
+      localStorage.setItem("backendAtivo", backendAtivo);
+      updateToggleButton("backendBtn", backendAtivo);
+      syncSupabase("liberado_backend", backendAtivo);
     }
 
-    function botaoTeste() {
-      const prompt = document.getElementById("prompt").value.trim() || "teste";
+    function syncSupabase(field, value) {
       fetch("https://hook.us2.make.com/9hepoum5v5jgw5mqrvj1ocxo6aq1viyi", {
         method: "POST",
         headers: {
@@ -252,14 +247,13 @@
         },
         body: JSON.stringify({
           user_id: userId,
-          prompt: prompt,
-          ativo: true, // 🔵 Força ativo para Redetermine
-          carrossel: carrosselAtivo,
-          liberado_backend: backendAtivo
+          [field]: value
         })
-      }).then(() => {
-        alert("TESTE enviado — faça Redetermine!");
-      });
+      })
+      .then(res => {
+        if (!res.ok) alert("Erro ao atualizar " + field);
+      })
+      .catch(() => alert("Erro de rede ao atualizar " + field));
     }
   </script>
 </body>
