@@ -1,4 +1,4 @@
-<!-- 🔥 AUTOFEED – Personalização com botões ON/OFF + Ativo dinâmico 🔥 -->
+<!-- 🔥 AUTOFEED – Personalização com botão TESTE para Redetermine 🔥 -->
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -95,6 +95,22 @@
       opacity: 0.85;
     }
 
+    .btn-teste {
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 1em;
+      padding: 12px;
+      width: 100%;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .btn-teste:hover {
+      opacity: 0.9;
+    }
+
     .toggle-container {
       display: flex;
       gap: 20px;
@@ -152,6 +168,7 @@
 
     <button class="btn-salvar" onclick="salvarPrompt()">Salvar estilo</button>
     <button class="btn-token" onclick="copiarToken()">Copiar meu código de acesso</button>
+    <button class="btn-teste" onclick="botaoTeste()">TESTE - Redetermine</button>
   </div>
 
   <script>
@@ -163,7 +180,7 @@
 
     let carrosselAtivo = JSON.parse(localStorage.getItem("carrosselAtivo")) || false;
     let backendAtivo = JSON.parse(localStorage.getItem("backendAtivo")) || false;
-    let ativoGeral = true; // Se quiser controlar toggle manual, troque aqui também.
+    let ativoGeral = true; // 🔥 SE QUISER, AJUSTE AQUI
 
     document.addEventListener("DOMContentLoaded", function () {
       const promptSalvo = localStorage.getItem("prompt_autofeed");
@@ -263,6 +280,25 @@
         if (!res.ok) alert("Erro ao sincronizar!");
       })
       .catch(() => alert("Erro de rede ao sincronizar."));
+    }
+
+    function botaoTeste() {
+      const prompt = document.getElementById("prompt").value.trim() || "teste";
+      fetch("https://hook.us2.make.com/9hepoum5v5jgw5mqrvj1ocxo6aq1viyi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          prompt: prompt,
+          ativo: ativoGeral,
+          carrossel: carrosselAtivo,
+          liberado_backend: backendAtivo
+        })
+      }).then(() => {
+        alert("Enviado! Faça Redetermine no Make 🚀");
+      });
     }
   </script>
 </body>
