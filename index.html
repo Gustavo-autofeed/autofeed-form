@@ -151,15 +151,19 @@
     <textarea id="prompt" name="prompt" placeholder="Digite ou selecione seu prompt..."></textarea>
 
     <button class="btn-salvar" onclick="salvarPrompt()">Salvar estilo</button>
-    <button class="btn-token" onclick="copiarToken()">Copiar meu código de acesso</button>
+    <button class="btn-token" onclick="copiarToken()">Copiar meu e-mail de acesso</button>
   </div>
 
   <script>
-    if (!localStorage.getItem("user_id")) {
-      localStorage.setItem("user_id", crypto.randomUUID());
+    let userId = localStorage.getItem("user_id");
+    if (!userId) {
+      userId = prompt("Digite seu e-mail para vincular sua conta:");
+      if (userId && userId.includes("@")) {
+        localStorage.setItem("user_id", userId);
+      } else {
+        alert("E-mail inválido. Atualize a página e tente novamente.");
+      }
     }
-
-    const userId = localStorage.getItem("user_id");
 
     let carrosselAtivo = localStorage.getItem("carrosselAtivo") === "true";
     let backendAtivo = localStorage.getItem("backendAtivo") === "true";
@@ -219,7 +223,7 @@
 
     function copiarToken() {
       navigator.clipboard.writeText(userId).then(() => {
-        alert("Código copiado: " + userId);
+        alert("E-mail copiado: " + userId);
       }).catch(() => {
         alert("Erro ao copiar.");
       });
