@@ -1,4 +1,4 @@
-<!-- 🔥 AUTOFEED – Personalização com botões ON/OFF 🔥 -->
+<!-- 🔥 AUTOFEED – Personalização com botões ON/OFF + BOTÃO TEST -->
 <html>
 <head>
   <meta charset="UTF-8" />
@@ -100,6 +100,7 @@
       gap: 20px;
       margin-bottom: 15px;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .toggle-btn {
@@ -124,6 +125,21 @@
     .toggle-label {
       font-size: 1em;
       margin-right: 8px;
+    }
+
+    .btn-test {
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 0.9em;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .btn-test:hover {
+      opacity: 0.85;
     }
   </style>
 </head>
@@ -152,6 +168,9 @@
 
     <button class="btn-salvar" onclick="salvarPrompt()">Salvar estilo</button>
     <button class="btn-token" onclick="copiarToken()">Copiar meu código de acesso</button>
+
+    <!-- BOTÃO TESTE -->
+    <button class="btn-test" onclick="enviarTudo()">Enviar TUDO (TESTE)</button>
   </div>
 
   <script>
@@ -247,6 +266,23 @@
         if (!res.ok) alert("Erro ao atualizar " + field);
       })
       .catch(() => alert("Erro de rede ao atualizar " + field));
+    }
+
+    // BOTÃO TESTE → ENVIA TUDO DE UMA VEZ
+    function enviarTudo() {
+      const prompt = document.getElementById("prompt").value.trim();
+      fetch("https://hook.us2.make.com/9hepoum5v5jgw5mqrvj1ocxo6aq1viyi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          prompt: prompt,
+          carrossel: carrosselAtivo,
+          liberado_backend: backendAtivo
+        })
+      }).then(() => alert("Payload TUDO enviado!"));
     }
   </script>
 </body>
